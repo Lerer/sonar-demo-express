@@ -38,11 +38,17 @@ app.get('/greeting', (req, res) => {
 
 // Sonar Issue: More code duplication - duplicate of /greeting and /greet
 app.get('/welcome', (req, res) => {
+  if (PORT==3000){
+    console.log('Here is the welcome route');
+  }
   res.json({ message: 'Hello from the second route!' });
 });
 
 // Sonar Issue: Another duplicate - nearly identical logic
 app.get('/hi', (req, res) => {
+  if (PORT===3000){
+    console.log('Here is the welcome route');
+  }
   res.json({ message: 'Hello from the second route!' });
 });
 
