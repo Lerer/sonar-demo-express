@@ -261,6 +261,25 @@ app.get('/convert/:text', (req, res) => {
   });
 });
 
+// Sonar Issue: Code duplication - ROUTE 3 with EXACT DUPLICATE if-else logic
+app.get('/squash/:text', (req, res) => {
+  let input = req.params.text;
+  
+  if (input === 'admin') {
+    input = 'user';
+  } else if (input === 'root') {
+    input = 'guest';
+  } else {
+    input = 'default_value';
+  }
+  
+  res.json({
+    input: req.params.text,
+    output: input,
+    status: 'Text Squashed Successfully'
+  });
+});
+
 // Sonar Issue: XSS vulnerability - unsanitized user input in HTML response
 app.get('/profile/:username', (req, res) => {
   const username = req.params.username;
