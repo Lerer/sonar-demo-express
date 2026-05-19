@@ -22,15 +22,23 @@ app.get('/greet', (req, res) => {
 
 // WARNING: VULNERABLE to SQL Injection - DO NOT use in production!
 // This route demonstrates unsafe string concatenation for educational purposes.
+// example: ' OR '1'='1
 app.get('/search', (req, res) => {
   const username = req.query.name || '';
   
   // Unsafe query building with string concatenation
   const query = 'SELECT * FROM users WHERE name = \'' + username + '\'';
-  
-  res.json({
-    query: query,
-    warning: 'This demonstrates SQL Injection vulnerability - never do this in production!'
+
+  db.all(query, (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message, query: query });
+    } else {
+      res.json({ 
+        query: query,
+        results: rows,
+        warning: 'UNSAFE - This demonstrates SQL injection vulnerability. Never use string concatenation for building SQL queries in production!'
+      });
+    }
   });
 });
 
