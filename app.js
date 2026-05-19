@@ -36,20 +36,63 @@ app.get('/greeting', (req, res) => {
   res.json({ message: 'Hello from the second route!' });
 });
 
+// Sonar Issue: More code duplication - duplicate of /greeting and /greet
+app.get('/welcome', (req, res) => {
+  res.json({ message: 'Hello from the second route!' });
+});
+
+// Sonar Issue: Another duplicate - nearly identical logic
+app.get('/hi', (req, res) => {
+  res.json({ message: 'Hello from the second route!' });
+});
+
+// Sonar Issue: Duplicate with slight variation
+app.get('/welcome-message', (req, res) => {
+  res.json({ message: 'Hello from the second route!' });
+});
+
 // Sonar Issue: Dead code - unreachable after return
 app.get('/status', (req, res) => {
   res.json({ status: 'ok' });
   console.log('This line is unreachable');
 });
 
-// Sonar Issue: Complex conditional logic
+// Sonar Issue: Complex conditional logic with high cognitive complexity
 app.get('/validate/:email', (req, res) => {
   const email = req.params.email;
   let isValid = false;
   
-  // Sonar Issue: Overly complex condition
-  if (email && email.length > 0 && email.includes('@') && email.includes('.') && email.indexOf('@') < email.lastIndexOf('.')) {
-    isValid = true;
+  // Sonar Issue: Very complex nested condition with high cognitive complexity (>15)
+  if (email) {
+    if (email.length > 0) {
+      if (email.includes('@')) {
+        if (email.includes('.')) {
+          if (email.indexOf('@') < email.lastIndexOf('.')) {
+            if (email.split('@')[0].length > 0) {
+              if (email.split('@')[1] && email.split('@')[1].length > 0) {
+                if (email.split('@')[1].includes('.')) {
+                  if (email.split('.').length > 1) {
+                    if (!email.startsWith('@')) {
+                      if (!email.endsWith('@')) {
+                        if (!email.endsWith('.')) {
+                          if (!email.includes('..')) {
+                            if (!/[^a-zA-Z0-9.@_-]/.test(email)) {
+                              if (email.split('@').length === 2) {
+                                isValid = true;
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
   
   res.json({ email: email, isValid: isValid });
