@@ -181,30 +181,8 @@ app.get('/greet', (req, res) => {
   res.json({ message: 'Hello from the second route!' });
 });
 
-// WARNING: VULNERABLE to SQL Injection - DO NOT use in production!
-// This route demonstrates unsafe string concatenation for educational purposes.
-// example: ' OR '1'='1
-app.get('/search', (req, res) => {
-  const username = req.query.name || '';
-  
-  // Unsafe query building with string concatenation
-  const query = 'SELECT * FROM users WHERE name = \'' + username + '\'';
-
-  db.all(query, (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message, query: query });
-    } else {
-      res.json({ 
-        query: query,
-        results: rows,
-        warning: 'UNSAFE - This demonstrates SQL injection vulnerability. Never use string concatenation for building SQL queries in production!'
-      });
-    }
-  });
-});
-
 // Safe version using parameterized queries (recommended)
-app.get('/search-safe', (req, res) => {
+app.get('/search', (req, res) => {
   const username = req.query.name || '';
   
   // Safe approach using parameterized query
@@ -217,7 +195,7 @@ app.get('/search-safe', (req, res) => {
       res.json({ 
         query: query,
         results: rows,
-        note: 'This is the safe approach using parameterized queries'
+        note: 'Using safe parameterized queries'
       });
     }
   });
@@ -325,6 +303,5 @@ app.listen(PORT, () => {
   console.log(`Routes:`);
   console.log(`  - http://localhost:${PORT}/hello`);
   console.log(`  - http://localhost:${PORT}/greet`);
-  console.log(`  - http://localhost:${PORT}/search?name=Alice (vulnerable - string concat)`);
-  console.log(`  - http://localhost:${PORT}/search-safe?name=Alice (safe - parameterized)`);
+  console.log(`  - http://localhost:${PORT}/search?name=Alice (safe - parameterized)`);
 });
