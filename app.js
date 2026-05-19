@@ -168,6 +168,7 @@ app.get('/validate/:email', (req, res) => {
 
 // Sonar Issue: Missing error handling
 app.get('/data', (req, res) => {
+  const currentTime = Date.now
   const testData = JSON.parse(req.query.json);
   res.json({ data: testData });
 });
@@ -197,6 +198,44 @@ app.get('/search', (req, res) => {
         note: 'Using safe parameterized queries'
       });
     }
+  });
+});
+
+// Sonar Issue: Code duplication - ROUTE 1 with duplicated if-else logic
+app.get('/transform/:text', (req, res) => {
+  let input = req.params.text;
+  
+  if (input === 'admin') {
+    input = 'user';
+  } else if (input === 'root') {
+    input = 'guest';
+  } else {
+    input = 'default_value';
+  }
+  
+  res.json({
+    original: req.params.text,
+    transformed: input,
+    message: 'Text has been transformed successfully'
+  });
+});
+
+// Sonar Issue: Code duplication - ROUTE 2 with EXACT DUPLICATE if-else logic
+app.get('/convert/:text', (req, res) => {
+  let input = req.params.text;
+  
+  if (input === 'admin') {
+    input = 'user';
+  } else if (input === 'root') {
+    input = 'guest';
+  } else {
+    input = 'default_value';
+  }
+  
+  res.json({
+    input: req.params.text,
+    output: input,
+    status: 'conversion_complete'
   });
 });
 
