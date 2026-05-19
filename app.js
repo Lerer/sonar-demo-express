@@ -261,6 +261,46 @@ app.get('/convert/:text', (req, res) => {
   });
 });
 
+// Sonar Issue: XSS vulnerability - unsanitized user input in HTML response
+app.get('/profile/:username', (req, res) => {
+  const username = req.params.username;
+  
+  // Sonar Issue: CRITICAL XSS vulnerability - user input directly injected into HTML
+  const htmlResponse = `
+    <html>
+      <body>
+        <h1>User Profile</h1>
+        <p>Welcome, ${username}!</p>
+        <div id="user-info">
+          Username: <strong>${username}</strong>
+        </div>
+        <script>
+          console.log('User: ${username}');
+        </script>
+      </body>
+    </html>
+  `;
+  
+  res.setHeader('Content-Type', 'text/html');
+  res.send(htmlResponse);
+});
+
+// Sonar Issue: Another XSS vulnerability - unsanitized query parameter in JSON with HTML content
+app.get('/display', (req, res) => {
+  const message = req.query.msg || 'No message';
+  
+  // Sonar Issue: XSS - user input in HTML content
+  const html = `
+    <div class="message-box">
+      <h2>Message Display</h2>
+      <p>${message}</p>
+      <img src="x" onerror="alert('XSS')">
+    </div>
+  `;
+  
+  res.send(html);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
   console.log(`Routes:`);
