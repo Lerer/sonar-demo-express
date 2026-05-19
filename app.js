@@ -227,7 +227,6 @@ app.get('/search-safe', (req, res) => {
 app.get('/transform/:text', (req, res) => {
   let input = req.params.text;
   
-  // Sonar Issue: Duplicated if-else block (also appears in /convert route below)
   if (input === 'admin') {
     input = 'user';
   } else if (input === 'root') {
@@ -247,7 +246,6 @@ app.get('/transform/:text', (req, res) => {
 app.get('/convert/:text', (req, res) => {
   let input = req.params.text;
   
-  // Sonar Issue: EXACT DUPLICATE of the if-else block from /transform route
   if (input === 'admin') {
     input = 'user';
   } else if (input === 'root') {
