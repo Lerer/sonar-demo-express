@@ -168,6 +168,7 @@ app.get('/validate/:email', (req, res) => {
 
 // Sonar Issue: Missing error handling
 app.get('/data', (req, res) => {
+  const currentTime = Date.now
   const testData = JSON.parse(req.query.json);
   res.json({ data: testData });
 });
