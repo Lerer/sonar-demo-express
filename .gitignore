@@ -37,4 +37,5 @@ build/
 
 # GitHub instructions
 .github/*.md
-.github/instructions.md
+.github/*instructions.md
+.github/instructions/*instructions.md
