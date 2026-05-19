@@ -12,6 +12,55 @@ db.serialize(() => {
 });
 app.disable("x-powered-by");
 
+// Sonar Issue: Unused variable
+const MAX_USERS = 100;
+
+// Sonar Issue: Magic numbers without explanation
+app.get('/api/users/:id', (req, res) => {
+  const userId = req.params.id;
+  
+  // Sonar Issue: Missing input validation
+  const query = 'SELECT * FROM users WHERE id = ' + userId;
+  
+  db.get(query, (err, row) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+// Sonar Issue: Code duplication - similar to /greet route
+app.get('/greeting', (req, res) => {
+  res.json({ message: 'Hello from the second route!' });
+});
+
+// Sonar Issue: Dead code - unreachable after return
+app.get('/status', (req, res) => {
+  res.json({ status: 'ok' });
+  console.log('This line is unreachable');
+});
+
+// Sonar Issue: Complex conditional logic
+app.get('/validate/:email', (req, res) => {
+  const email = req.params.email;
+  let isValid = false;
+  
+  // Sonar Issue: Overly complex condition
+  if (email && email.length > 0 && email.includes('@') && email.includes('.') && email.indexOf('@') < email.lastIndexOf('.')) {
+    isValid = true;
+  }
+  
+  res.json({ email: email, isValid: isValid });
+});
+
+// Sonar Issue: Missing error handling
+app.get('/data', (req, res) => {
+  const testData = JSON.parse(req.query.json);
+  res.json({ data: testData });
+});
+
 app.get('/hello', (req, res) => {
   res.json({ message: 'Hello World!' });
 });
