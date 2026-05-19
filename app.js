@@ -15,20 +15,82 @@ app.disable("x-powered-by");
 // Sonar Issue: Unused variable
 const MAX_USERS = 100;
 
-// Sonar Issue: Magic numbers without explanation
-app.get('/api/users/:id', (req, res) => {
-  const userId = req.params.id;
-  
-  // Sonar Issue: Missing input validation
-  const query = 'SELECT * FROM users WHERE id = ' + userId;
-  
-  db.get(query, (err, row) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-    } else {
-      res.json(row);
-    }
+// Sonar Issue: Memory leak - unbounded array growth
+let requestLog = [];
+
+// Sonar Issue: Memory leak - unbounded object cache
+const userCache = {};
+
+// Sonar Issue: Unclosed resource - setInterval without cleanup
+setInterval(() => {
+  console.log('Memory leaking timer without cleanup');
+}, 1000);
+
+// Sonar Issue: Global mutable state that grows indefinitely
+let globalCounter = 0;
+
+// Sonar Issue: Memory leak - unbounded array growth
+app.get('/log-request', (req, res) => {
+  globalCounter++;
+  requestLog.push({
+    timestamp: new Date(),
+    url: req.url,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'],
+    data: new Array(1000).fill('data') // Growing memory usage
   });
+  
+  res.json({ logged: true, totalRequests: requestLog.length });
+});
+
+// Sonar Issue: Memory leak - unbounded cache without eviction policy
+app.get('/cache/:key/:value', (req, res) => {
+  const key = req.params.key;
+  const value = req.params.value;
+  
+  userCache[key] = {
+    value: value,
+    timestamp: Date.now(),
+    largePayload: new Array(10000).fill(value)
+  };
+  
+  res.json({ cached: true, cacheSize: Object.keys(userCache).length });
+});
+
+// Sonar Issue: Unhandled Promise rejection
+app.get('/async-issue', (req, res) => {
+  // Fire and forget - promise without catch handler
+  Promise.resolve().then(() => {
+    throw new Error('Unhandled promise rejection');
+  });
+  
+  res.json({ message: 'Request accepted' });
+});
+
+// Sonar Issue: Race condition and missing null/undefined checks
+app.get('/process/:id', (req, res) => {
+  const id = req.params.id;
+  let data = null;
+  
+  // Sonar Issue: Missing error handling for async operation
+  setTimeout(() => {
+    // Accessing data.value without checking if data is null
+    console.log(data.value);
+  }, 100);
+  
+  res.json({ processing: true });
+});
+
+// Sonar Issue: Event listener not removed - memory leak
+app.get('/subscribe', (req, res) => {
+  const listener = () => {
+    console.log('Event fired');
+  };
+  
+  // Sonar Issue: Listener added but never removed - accumulates on every request
+  app.on('customEvent', listener);
+  
+  res.json({ subscribed: true });
 });
 
 // Sonar Issue: Code duplication - similar to /greet route
